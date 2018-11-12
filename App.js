@@ -50,60 +50,60 @@ export default class App extends Component<{}> {
         };
     }
 
-    get_speech() {
-        this.setState({ listening: true });
-        recognise()
-            .then(bestRecognition => {
-            console.log('recognised:', resultTextToEvent(bestRecognition));
-    })
-    .catch(error => {
-            console.log('error:', error);
-    });
-        this.setState({ listening: false });
-    }
+    // get_speech() {
+    //     this.setState({ listening: true });
+    //     recognise()
+    //         .then(bestRecognition => {
+    //         console.log('recognised:', resultTextToEvent(bestRecognition));
+    // })
+    // .catch(error => {
+    //         console.log('error:', error);
+    // });
+    //     this.setState({ listening: false });
+    // }
 
     web_search=(text)=>{
         get_webresults(text)
             .then(text => text.json())
-    .then(textjson =>
-        this.setState({
-            text: [...this.state.text, 'web+++$+++' + JSON.stringify(textjson)],
-        fetching: false,
-    }),
-    )
-    .catch(e => {console.log(e);this.setState({ fetching: false })});
+            .then(textjson =>
+                this.setState({
+                    text: [...this.state.text, 'web+++$+++' + JSON.stringify(textjson)],
+                    fetching: false,
+                }),
+                )
+            .catch(e => {console.log(e);this.setState({ fetching: false })});
     };
 
     get_response = text => {
         if (text)
             this.setState({ fetching: true });
-        url = 'https://chatbot11298.herokuapp.com/get?msg=' + text;
-        fetch(url)
-            .then(result => result._bodyText)
-    .then(responseData => {
-            Tts.speak(responseData);
-        this.setState({
-            text: [...this.state.text, 'bot+++$+++' + responseData],
-        fetching: false,
-    });
-        if (responseData === "I'm sorry, I do not know that!") {
-            this.setState({
-                text: [...this.state.text, 'bot+++$+++Let me search the internet'],
-            fetching: true,
-        });
-            this.web_search(text);
-        }
-    })
-    .catch(e => {
-            console.log(e);
-        this.setState({ fetching: false });
-    });
-        Tts.stop();
+            if(text.toLowerCase().contains("search")){
+                this.web_search(text.substring(7))
+            }else{
+                let url = 'https://chatbot11298.herokuapp.com/get?msg="' + text + '"';
+                fetch(url)
+                    .then(result =>result.text())
+                    .then(responseData => {
+                        Tts.speak(responseData);
+                        this.setState({
+                            text: [...this.state.text, 'bot+++$+++' + responseData],
+                            fetching: false,
+                        });
+                        if (responseData === "I'm sorry, I do not know that!") {
+                            this.setState({
+                                text: [...this.state.text, 'bot+++$+++Let me search the internet'],
+                                fetching: true,
+                            });
+                            this.web_search(text);
+                        }
+                        })
+                    .catch(e => {
+                        console.log(e);
+                        this.setState({ fetching: false });
+                    });
+                    Tts.stop();
+            }
     };
-
-    componentWillMount() {
-      this.get_response('How are you?');
-    }
 
     render() {
         return (
@@ -121,7 +121,7 @@ export default class App extends Component<{}> {
     <Text style={styles.text}>{'Hello! My name is Nora'}</Text>
         </View>
         {this.state.text.map((content, index) => {
-            data = content.split('+++$+++');
+            let data = content.split('+++$+++');
             if (data[0] === 'user') {
                 return (
                     <View style={styles.user} key={index}>
@@ -172,6 +172,7 @@ export default class App extends Component<{}> {
                 text: [...this.state.text, 'user+++$+++' + this.state.key],
         });
             this.get_response(this.state.key);
+            console.log(this.state.key)
             this.setState({ key: '' });
         }}
         />

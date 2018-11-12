@@ -3,7 +3,7 @@ package com.nora;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.zhangxiaoduo.rnsr.SpeechRecognitionPackage;
+import de.siteof.rn.androidspeechrecognizer.RNAndroidSpeechRecognizerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import net.no_mad.tts.TextToSpeechPackage;
 import com.facebook.react.ReactNativeHost;
@@ -26,7 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new SpeechRecognitionPackage(),
+            new RNAndroidSpeechRecognizerPackage(),
             new VectorIconsPackage(),
             new TextToSpeechPackage()
       );

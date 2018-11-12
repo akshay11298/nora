@@ -137,7 +137,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-speech-recognizer')
+    compile project(':react-native-android-speech-recognizer')
     compile project(':react-native-vector-icons')
     compile project(':react-native-tts')
     compile fileTree(dir: "libs", include: ["*.jar"])
